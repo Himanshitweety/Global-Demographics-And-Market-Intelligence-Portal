@@ -122,5 +122,24 @@ with tab1:
 
     st.divider()
 
-    st.divider()
+
+    st.subheader("Download Data")
+
+    col1, col2 = st.columns(2)
+    with col1:
+        csv_filtered = df_filtered.to_csv(index=False)
+        st.download_button(
+            label="Download Filtered Data",
+            data=csv_filtered,
+            file_name="world_population_filtered.csv",
+            mime="text/csv"
+            )
+    with col2:
+        csv_full = df.to_csv(index=False)
+        st.download_button(
+            label="Download Full Dataset",
+            data=csv_full,
+            file_name="world_population_2026.csv",
+            mime="text/csv"
+            )
 
