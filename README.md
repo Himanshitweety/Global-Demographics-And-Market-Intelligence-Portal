@@ -1,5 +1,7 @@
 # World Population Explorer 2026
 
+Live demo: https://global-demographics.streamlit.app/
+
 A Python-based interactive analytics dashboard for exploring demographic patterns across 233 countries, benchmarking key indicators, and identifying market opportunities through data-driven scoring and clustering.
 
 ## Overview
