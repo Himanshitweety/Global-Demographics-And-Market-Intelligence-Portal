@@ -1,69 +1,109 @@
-World Population Explorer 2026
+# World Population Explorer 2026
 
-An interactive demographic dashboard built with Python and Streamlit that allows users to explore population data across 233 countries, identify market opportunities, and analyse global trends using machine learning.
+A Python-based interactive analytics dashboard for exploring demographic patterns across 233 countries, benchmarking key indicators, and identifying market opportunities through data-driven scoring and clustering.
 
-Overview
+## Overview
 
-This application takes a real-world dataset of global population statistics and transforms it into a five-tab interactive tool. Each tab answers a different question about the world's demographics — from basic exploration to machine learning powered market analysis.
+This project uses a global population dataset to build a multi-tab Streamlit application for demographic analysis and strategic insight generation. The system combines exploratory visual analytics with machine learning to support market screening and country-level comparison.
 
-Tabs
-Tab 1 — Global Overview
+### Core capabilities
+- analyse demographic indicators such as population, fertility rate, median age, and urbanization
+- compare countries across multiple dimensions in a single interface
+- visualize geographic concentration through an interactive map
+- evaluate opportunity potential using a weighted scoring model
+- apply unsupervised clustering to identify similar demographic profiles
 
-The main landing page of the application. It displays four key metrics at the top — total countries, world population, average fertility rate, and average median age. Below that, two bar charts show the top 10 most populated countries and the top 10 fastest growing countries by yearly percentage change.
+## Features
 
-A sidebar with four sliders lets users filter the entire dataset in real time by minimum population, maximum fertility rate, minimum median age, and minimum urban population percentage. All charts and metrics update instantly when filters are changed. Users can also download the filtered or full dataset as a CSV file.
+### 1. Global Overview
+- KPI cards for total countries, total population, average fertility rate, and median age
+- top 10 countries by population
+- top 10 countries by yearly growth rate
+- interactive filtering by population, fertility, age, and urban concentration
+- CSV export for filtered or full dataset views
 
-Tab 2 — World Map
+### 2. World Map
+- Folium-based geographic visualization of high-population countries
+- circular markers scaled by population size
+- country-level summaries in map popups
 
-An interactive map built with Folium showing the top 20 most populated countries as circular markers. The size of each circle is proportional to the country's population. Clicking any circle opens a popup showing the country's name, population, fertility rate, and median age. This tab gives users a geographic view of where population is concentrated globally.
+### 3. Country Deep Dive
+- country selector for granular demographic inspection
+- metric cards for population, median age, urban population share, and fertility rate
+- comparison against global averages for direct benchmarking
 
-Tab 3 — Country Deep Dive
+### 4. Country Comparison
+- multi-country comparison across population, fertility, and median age
+- comparative bar charts and summary tables
+- quick identification of relative strengths and gaps
 
-Users select any country from a dropdown and instantly see its complete demographic profile across four metric cards — population, median age, urban population percentage, and fertility rate. A grouped bar chart below compares the selected country's key metrics against global averages, making it easy to see where a country stands relative to the rest of the world.
+### 5. Market Opportunity Analyzer
+- weighted scoring framework based on youth profile, urbanization, growth, and market size
+- MinMax normalization to avoid metric dominance bias
+- rank-based opportunity assessment on a 0–100 scale
+- country-specific score breakdown and ranking information
 
-Tab 4 — Country Comparison
+### 6. K-Means Clustering
+- demographic segmentation using K-Means clustering
+- cluster labels such as Young & Growing, Aging & Urban, Transitioning, and High Density
+- cluster distribution visualization and country-level cluster exploration
 
-Users select two or more countries to compare side by side. A population bar chart shows the size difference between selected countries. Two smaller charts compare fertility rate and median age. A detailed table at the bottom displays all key metrics for the selected countries together in one view.
+## Tech Stack
 
-Tab 5 — Market Opportunity Analyser
-
-The most advanced section of the application. Users set four preference sliders representing how much they value a young population, high urbanisation, fast population growth, and large market size. The application then scores all 233 countries using a weighted formula — each metric is normalised using Scikit-learn's MinMaxScaler so that no single metric dominates the score unfairly. The weighted scores are combined and scaled to a range of 0 to 100.
-
-The top 10 countries by opportunity score are displayed as a bar chart. Users can also search for any specific country to see its score, a verdict label, its global rank out of 233, and a breakdown chart showing how much each factor contributed to its final score.
-
-K-Means Clustering
-
-Integrated into Tab 1, this unsupervised machine learning model automatically groups all 233 countries into four demographic clusters based on median age, urbanisation, fertility rate, and yearly growth. The clusters are labelled Young and Growing, Aging and Urban, Transitioning, and High Density. A pie chart shows the distribution and users can explore which countries fall into each cluster.
-
-Technology Stack
-Python
-Streamlit
-Pandas
-NumPy
-Matplotlib
-Scikit-learn
-Folium and Streamlit-Folium
+- Python
+- Streamlit
+- Pandas
+- NumPy
+- Matplotlib
+- Plotly
+- Scikit-learn
+- Folium
+- streamlit-folium
 
 [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://blank-app-template.streamlit.app/)
 
-How to Run
-Option 1 — Run on Streamlit Cloud
+## Project Structure
 
-Click the badge at the top of this README to open the live app directly in your browser.
+- `streamlit_app.py` — main Streamlit dashboard implementation
+- `world_population_by_country_2026.csv` — demographic dataset used in the app
+- `requirements.txt` — Python dependencies
+- `pyproject.toml` — project metadata and uv configuration
+- `README.md` — project documentation
 
-Option 2 — Run locally using uv
+## Run the Application
 
-Prerequisite: install uv if you don't already have it.
+### Option 1: Streamlit Cloud
+Click the badge above to launch the app in the browser.
 
-$ curl -LsSf https://astral.sh/uv/install.sh | sh
-Sync the dependencies:
-   $ uv sync
-Run the app:
-   $ uv run streamlit run streamlit_app.py
-Option 3 — Run locally using pip
-Install dependencies:
-   $ pip install -r requirements.txt
-Run the app:
-   $ streamlit run streamlit_app.py
-Open your browser and go to:
-   http://localhost:8501
+### Option 2: Local setup with uv
+
+Install uv if it is not already available:
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+Then run:
+
+```bash
+uv sync
+uv run streamlit run streamlit_app.py
+```
+
+### Option 3: Local setup with pip
+
+```bash
+pip install -r requirements.txt
+streamlit run streamlit_app.py
+```
+
+Open the app in your browser at:
+
+```text
+http://localhost:8501
+```
+
+## Notes
+
+This project is intended for demographic exploration, macro-level market analysis, and data storytelling, making it suitable for research, business intelligence, and analytical dashboard use cases.
+
