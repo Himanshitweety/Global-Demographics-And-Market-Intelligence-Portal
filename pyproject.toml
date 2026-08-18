@@ -1,7 +1,7 @@
 [project]
 name = "world-population-explorer"
 version = "1.0.0"
-description = "World Population Explorer 2026 — Interactive demographic dashboard with ML clustering and market opportunity analysis."
+description = "World Population Explorer 2026"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
@@ -12,6 +12,7 @@ dependencies = [
     "scikit-learn>=1.3.0",
     "folium>=0.14.0",
     "streamlit-folium>=0.15.0",
+    "plotly==5.18.0",
 ]
 
 [tool.uv]
