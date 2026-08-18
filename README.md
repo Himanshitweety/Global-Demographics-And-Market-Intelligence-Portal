@@ -103,7 +103,3 @@ Open the app in your browser at:
 http://localhost:8501
 ```
 
-## Notes
-
-This project is intended for demographic exploration, macro-level market analysis, and data storytelling, making it suitable for research, business intelligence, and analytical dashboard use cases.
-
