@@ -121,8 +121,14 @@ with tab1:
     plt.close()
 
     st.divider()
-
-
+# Full table
+    st.subheader("📋 Full Dataset")
+    st.dataframe(
+        df_filtered.sort_values("Rank")[["Rank", "Country", "Population_2026",
+                                 "Yearly_Change", "Fertility_Rate",
+                                 "Median_Age", "Urban_Population_pct"]],
+        use_container_width=True
+    )
     st.subheader("Download Data")
 
     col1, col2 = st.columns(2)
@@ -142,4 +148,66 @@ with tab1:
             file_name="world_population_2026.csv",
             mime="text/csv"
             )
+# tab 2 
+with tab2:
+    st.header("World Population Map")
 
+    import folium
+    from streamlit_folium import st_folium
+    country_coords = {
+        "India": [20.5937, 78.9629],
+        "China": [35.8617, 104.1954],
+        "United States": [37.0902, -95.7129],
+        "Indonesia": [-0.7893, 113.9213],
+        "Pakistan": [30.3753, 69.3451],
+        "Nigeria": [9.0820, 8.6753],
+        "Brazil": [-14.2350, -51.9253],
+        "Bangladesh": [23.6850, 90.3563],
+        "Russia": [61.5240, 105.3188],
+        "Ethiopia": [9.1450, 40.4897],
+        "Mexico": [23.6345, -102.5528],
+        "Japan": [36.2048, 138.2529],
+        "Philippines": [12.8797, 121.7740],
+        "DR Congo": [-4.0383, 21.7587],
+        "Egypt": [26.8206, 30.8025],
+        "Vietnam": [14.0583, 108.2772],
+        "Iran": [32.4279, 53.6880],
+        "Turkey": [38.9637, 35.2433],
+        "Germany": [51.1657, 10.4515],
+        "Thailand": [15.8700, 100.9925],
+    }
+
+    m = folium.Map(location=[20, 0], zoom_start=2)
+
+    for country, coords in country_coords.items():
+        row = df[df["Country"] == country]
+        if not row.empty:
+            pop = int(row["Population_2026"].values[0])
+            fertility = float(row["Fertility_Rate"].values[0])
+            median_age = float(row["Median_Age"].values[0])
+
+            # Size based on population
+            radius = max(5, pop / 50000000)
+
+            folium.CircleMarker(
+                location=coords,
+                radius=radius,
+                color="steelblue",
+                fill=True,
+                fill_color="steelblue",
+                fill_opacity=0.6,
+                popup=folium.Popup(
+                    f"""
+                    <b>{country}</b><br>
+                    Population: {pop:,}<br>
+                    Fertility Rate: {fertility}<br>
+                    Median Age: {median_age}
+                    """,
+                    max_width=200
+                ),
+                tooltip=country
+            ).add_to(m)
+
+    st_folium(m, width=1200, height=500)
+
+    st.caption("Circle size represents relative population. Click any circle for details.")
