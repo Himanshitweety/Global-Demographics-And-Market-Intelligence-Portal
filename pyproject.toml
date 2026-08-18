@@ -1,11 +1,17 @@
 [project]
-name = "blank-app-template"
-version = "0.1.0"
-description = "A simple Streamlit app template."
+name = "world-population-explorer"
+version = "1.0.0"
+description = "World Population Explorer 2026 — Interactive demographic dashboard with ML clustering and market opportunity analysis."
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "streamlit>=1.61.1",
+    "pandas>=2.0.0",
+    "numpy>=1.24.0",
+    "matplotlib>=3.7.0",
+    "scikit-learn>=1.3.0",
+    "folium>=0.14.0",
+    "streamlit-folium>=0.15.0",
 ]
 
 [tool.uv]
