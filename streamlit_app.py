@@ -187,7 +187,7 @@ with tab1:
          ].sort_values("Population_2026", ascending=False)
     st.dataframe(cluster_countries, use_container_width=True)
 # Full table
-    st.subheader("📋 Full Dataset")
+    st.subheader("Full Dataset")
     st.dataframe(
         df_filtered.sort_values("Rank")[["Rank", "Country", "Population_2026",
                                  "Yearly_Change", "Fertility_Rate",
