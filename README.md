@@ -1,57 +1,69 @@
-# 🌍 Global Demographics & Market Intelligence Portal
+World Population Explorer 2026
 
-##  Project Overview
-This interactive web application processes up-to-date global demographic metrics (Total Population, Median Age, and Urban Population %) to uncover market expansion opportunities. Built with Python and Streamlit, the portal cleans raw data, clusters nations using Machine Learning, and presents insights across a structured 3-tab layout.
+An interactive demographic dashboard built with Python and Streamlit that allows users to explore population data across 233 countries, identify market opportunities, and analyse global trends using machine learning.
 
----
+Overview
 
-##  Key Features & App Structure
+This application takes a real-world dataset of global population statistics and transforms it into a five-tab interactive tool. Each tab answers a different question about the world's demographics — from basic exploration to machine learning powered market analysis.
 
-* **Data Cleaning & Pipeline:**
-  * Cleaned raw demographic data using Pandas by removing special characters (`%`, commas), converting text to numeric values, and handling missing values (`NaN`).
-  * Scaled feature metrics using Scikit-Learn's `MinMaxScaler` for uniform model input.
+Tabs
+Tab 1 — Global Overview
 
-* **Tab 1: Global Market Simulator & Clusters**
-  * **K-Means Clustering:** Automatically groups countries into 4 distinct demographic archetypes based on age and urbanization.
-  * **Interactive Choropleth Map:** Color-coded global visual analysis powered by Plotly Express.
-  * **Custom Opportunity Scoring:** Dynamic Streamlit sliders allow users to set preferences (e.g., target younger workforce or higher urbanization) using a custom NumPy matrix scoring formula.
+The main landing page of the application. It displays four key metrics at the top — total countries, world population, average fertility rate, and average median age. Below that, two bar charts show the top 10 most populated countries and the top 10 fastest growing countries by yearly percentage change.
 
-* **Tab 2: Country Deep-Dive**
-  * **Interactive Selector:** Choose any individual country to view its stats instantly.
-  * **Key Metric Cards:** Displays Total Population, Median Age, Urban Pop %, and assigned Cluster Group using Streamlit metrics.
-  * **Benchmark Visuals:** Bar charts comparing the selected country's metrics directly against global averages.
+A sidebar with four sliders lets users filter the entire dataset in real time by minimum population, maximum fertility rate, minimum median age, and minimum urban population percentage. All charts and metrics update instantly when filters are changed. Users can also download the filtered or full dataset as a CSV file.
 
-* **Tab 3: Side-by-Side Country Comparison**
-  * Select 2 or more countries to run comparative visual analyses across key demographic metrics.
+Tab 2 — World Map
 
----
+An interactive map built with Folium showing the top 20 most populated countries as circular markers. The size of each circle is proportional to the country's population. Clicking any circle opens a popup showing the country's name, population, fertility rate, and median age. This tab gives users a geographic view of where population is concentrated globally.
 
-## Tech Stack
-* **Language:** Python
-* **Data Handling & Math:** Pandas, NumPy
-* **Machine Learning:** Scikit-Learn (`KMeans`, `MinMaxScaler`)
-* **Data Visualization:** Plotly Express
-* **Web Framework:** Streamlit
-A simple Streamlit app template for you to modify!
+Tab 3 — Country Deep Dive
+
+Users select any country from a dropdown and instantly see its complete demographic profile across four metric cards — population, median age, urban population percentage, and fertility rate. A grouped bar chart below compares the selected country's key metrics against global averages, making it easy to see where a country stands relative to the rest of the world.
+
+Tab 4 — Country Comparison
+
+Users select two or more countries to compare side by side. A population bar chart shows the size difference between selected countries. Two smaller charts compare fertility rate and median age. A detailed table at the bottom displays all key metrics for the selected countries together in one view.
+
+Tab 5 — Market Opportunity Analyser
+
+The most advanced section of the application. Users set four preference sliders representing how much they value a young population, high urbanisation, fast population growth, and large market size. The application then scores all 233 countries using a weighted formula — each metric is normalised using Scikit-learn's MinMaxScaler so that no single metric dominates the score unfairly. The weighted scores are combined and scaled to a range of 0 to 100.
+
+The top 10 countries by opportunity score are displayed as a bar chart. Users can also search for any specific country to see its score, a verdict label, its global rank out of 233, and a breakdown chart showing how much each factor contributed to its final score.
+
+K-Means Clustering
+
+Integrated into Tab 1, this unsupervised machine learning model automatically groups all 233 countries into four demographic clusters based on median age, urbanisation, fertility rate, and yearly growth. The clusters are labelled Young and Growing, Aging and Urban, Transitioning, and High Density. A pie chart shows the distribution and users can explore which countries fall into each cluster.
+
+Technology Stack
+Python
+Streamlit
+Pandas
+NumPy
+Matplotlib
+Scikit-learn
+Folium and Streamlit-Folium
 
 [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://blank-app-template.streamlit.app/)
 
-### How to run it on your own machine
+How to Run
+Option 1 — Run on Streamlit Cloud
 
-Prerequisite: install `uv` if you don't already have it.
+Click the badge at the top of this README to open the live app directly in your browser.
 
-```
+Option 2 — Run locally using uv
+
+Prerequisite: install uv if you don't already have it.
+
 $ curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-1. Sync the dependencies
-
-   ```
+Sync the dependencies:
    $ uv sync
-   ```
-
-2. Run the app
-
-   ```
+Run the app:
    $ uv run streamlit run streamlit_app.py
-   ```
+Option 3 — Run locally using pip
+Install dependencies:
+   $ pip install -r requirements.txt
+Run the app:
+   $ streamlit run streamlit_app.py
+Open your browser and go to:
+   http://localhost:8501
