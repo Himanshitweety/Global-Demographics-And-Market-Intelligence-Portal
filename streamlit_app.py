@@ -211,3 +211,44 @@ with tab2:
     st_folium(m, width=1200, height=500)
 
     st.caption("Circle size represents relative population. Click any circle for details.")
+# TAB 3 — Country Deep Dive
+with tab3:
+    st.header("Country Deep Dive")
+
+    country = st.selectbox("Select a Country", df["Country"].sort_values())
+    row = df[df["Country"] == country].iloc[0]
+
+    st.divider()
+
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric("Population 2026", f"{row['Population_2026']:,.0f}")
+    with col2:
+        st.metric("Median Age", f"{row['Median_Age']}")
+    with col3:
+        st.metric("Urban Population %", f"{row['Urban_Population_pct']}%")
+    with col4:
+        st.metric("Fertility Rate", f"{row['Fertility_Rate']}")
+
+    st.divider()
+
+    # Benchmark chart
+    st.subheader(f"📊 {country} vs World Average")
+    metrics = ["Fertility_Rate", "Median_Age", "Urban_Population_pct", "Density_per_km2"]
+    world_avg = df[metrics].mean()
+    country_vals = [row[m] for m in metrics]
+    avg_vals = [world_avg[m] for m in metrics]
+
+    x = range(len(metrics))
+    width = 0.35
+
+    fig3, ax3 = plt.subplots(figsize=(10, 5))
+    ax3.bar([i - width/2 for i in x], country_vals, width, label=country, color="steelblue")
+    ax3.bar([i + width/2 for i in x], avg_vals, width, label="World Avg", color="orange")
+    ax3.set_xticks(list(x))
+    ax3.set_xticklabels(metrics, rotation=15)
+    ax3.legend()
+    ax3.set_title(f"{country} vs World Average")
+    st.pyplot(fig3)
+    plt.close()
+
