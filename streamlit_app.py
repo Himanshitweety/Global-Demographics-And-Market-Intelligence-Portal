@@ -121,6 +121,71 @@ with tab1:
     plt.close()
 
     st.divider()
+    # k -means clustering 
+
+    st.subheader("Country Demographic Clusters")
+
+
+    st.markdown("Countries automatically grouped by demographic similarity using K-Means.")
+
+    from sklearn.preprocessing import MinMaxScaler
+    from sklearn.cluster import KMeans
+
+
+# Features for clustering
+    cluster_features = ["Median_Age", "Urban_Population_pct",
+                        "Fertility_Rate", "Yearly_Change"]
+    cluster_data = df[cluster_features].copy()
+
+
+# Scale the data — important for K-Means
+    scaler = MinMaxScaler()
+    scaled_data = scaler.fit_transform(cluster_data)
+
+# Apply K-Means — 4 clusters
+    kmeans = KMeans(n_clusters=4, random_state=42, n_init=10)
+    df["Cluster"] = kmeans.fit_predict(scaled_data)
+
+    cluster_labels = {
+        0: "🟢 Young & Growing",
+        1: "🔵 Aging & Urban",
+        2: "🟡 Transitioning",
+        3: "🔴 High Density"
+    }
+    df["Cluster_Label"] = df["Cluster"].map(cluster_labels)
+    # Show cluster distribution
+    col1, col2 = st.columns(2)
+    with col1:
+        st.subheader("Cluster Distribution")
+        cluster_counts = df["Cluster_Label"].value_counts()
+        fig_cluster, ax_cluster = plt.subplots(figsize=(6, 4))
+        ax_cluster.pie(
+            cluster_counts.values,
+            labels=cluster_counts.index,
+            autopct="%1.1f%%",
+            colors=["#2ecc71", "#3498db", "#f1c40f", "#e74c3c"]
+            )
+        ax_cluster.set_title("Countries by Cluster")
+        st.pyplot(fig_cluster)
+        plt.close()
+
+    with col2:
+        st.subheader("Cluster Summary")
+        summary = df.groupby("Cluster_Label")[cluster_features].mean().round(2)
+        st.dataframe(summary, use_container_width=True)
+
+    st.divider()
+
+    # Show countries per cluster
+    selected_cluster = st.selectbox(
+        "Explore a cluster",
+        df["Cluster_Label"].unique()
+    )
+    cluster_countries = df[df["Cluster_Label"] == selected_cluster][
+        ["Country", "Median_Age", "Urban_Population_pct",
+         "Fertility_Rate", "Yearly_Change", "Population_2026"]
+         ].sort_values("Population_2026", ascending=False)
+    st.dataframe(cluster_countries, use_container_width=True)
 # Full table
     st.subheader("📋 Full Dataset")
     st.dataframe(
