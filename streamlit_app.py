@@ -252,3 +252,230 @@ with tab3:
     st.pyplot(fig3)
     plt.close()
 
+# tab 4 
+
+with tab4:
+    st.header("Side-by-Side Country Comparison")
+
+    selected = st.multiselect(
+        "Select 2 or more countries",
+        df["Country"].sort_values(),
+        default=["India", "China", "United States"]
+    )
+
+    if len(selected) < 2:
+        st.warning("Please select at least 2 countries.")
+    else:
+        filtered = df[df["Country"].isin(selected)]
+
+        st.divider()
+
+        # Population comparison
+        fig4, ax4 = plt.subplots(figsize=(10, 5))
+        ax4.bar(filtered["Country"], filtered["Population_2026"], color="steelblue")
+        ax4.set_title("Population Comparison")
+        ax4.set_ylabel("Population")
+        plt.xticks(rotation=15)
+        st.pyplot(fig4)
+        plt.close()
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            fig5, ax5 = plt.subplots(figsize=(6, 4))
+            ax5.bar(filtered["Country"], filtered["Fertility_Rate"], color="green")
+            ax5.set_title("Fertility Rate")
+            plt.xticks(rotation=15)
+            st.pyplot(fig5)
+            plt.close()
+
+        with col2:
+            fig6, ax6 = plt.subplots(figsize=(6, 4))
+            ax6.bar(filtered["Country"], filtered["Median_Age"], color="orange")
+            ax6.set_title("Median Age")
+            plt.xticks(rotation=15)
+            st.pyplot(fig6)
+            plt.close()
+
+        # Comparison table
+        st.subheader("📋 Detailed Comparison Table")
+        st.dataframe(
+            filtered[["Country", "Population_2026", "Yearly_Change",
+                      "Fertility_Rate", "Median_Age",
+                      "Urban_Population_pct", "World_Share_pct"]].set_index("Country"),
+            use_container_width=True
+        )
+
+with tab5:
+    st.header("Market Opportunity Analyser")
+    st.markdown("Set your business preferences and discover the best countries to expand into.")
+
+    st.divider()
+
+    # --- User Preferences ---
+    st.subheader("Set Your Business Preferences")
+    st.markdown("Move the sliders to match what matters most for your business.")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        w_young = st.slider(
+            "Young Population Matters",
+            0.0, 1.0, 0.5, 0.1,
+            help="Higher = prefer countries with younger median age"
+        )
+        w_urban = st.slider(
+            "Urban Population Matters",
+            0.0, 1.0, 0.5, 0.1,
+            help="Higher = prefer countries with more urban population"
+        )
+
+    with col2:
+        w_growth = st.slider(
+            "Population Growth Matters",
+            0.0, 1.0, 0.5, 0.1,
+            help="Higher = prefer fast growing markets"
+        )
+        w_size = st.slider(
+            "Market Size Matters",
+            0.0, 1.0, 0.5, 0.1,
+            help="Higher = prefer larger population markets"
+        )
+
+    st.divider()
+
+    # --- Scoring Logic ---
+    from sklearn.preprocessing import MinMaxScaler
+    import numpy as np
+
+    score_df = df.copy()
+
+    # Normalise each metric to 0-1
+    scaler = MinMaxScaler()
+    score_df["norm_young"] = 1 - scaler.fit_transform(
+        score_df[["Median_Age"]])          # invert — younger = higher score
+    score_df["norm_urban"] = scaler.fit_transform(
+        score_df[["Urban_Population_pct"]])
+    score_df["norm_growth"] = scaler.fit_transform(
+        score_df[["Yearly_Change"]])
+    score_df["norm_size"] = scaler.fit_transform(
+        score_df[["Population_2026"]])
+
+    # Calculate weighted opportunity score
+    score_df["Opportunity_Score"] = (
+        w_young  * score_df["norm_young"] +
+        w_urban  * score_df["norm_urban"] +
+        w_growth * score_df["norm_growth"] +
+        w_size   * score_df["norm_size"]
+    )
+
+    # Scale score to 0-100
+    score_df["Opportunity_Score"] = (
+        score_df["Opportunity_Score"] /
+        (w_young + w_urban + w_growth + w_size + 0.0001) * 100
+    ).round(1)
+
+    # --- Top 10 Opportunities ---
+    st.subheader("Top 10 Market Opportunities")
+    top_markets = score_df.nlargest(10, "Opportunity_Score")[
+        ["Country", "Opportunity_Score", "Population_2026",
+         "Median_Age", "Urban_Population_pct", "Yearly_Change"]
+    ].reset_index(drop=True)
+
+    # Bar chart
+    fig_score, ax_score = plt.subplots(figsize=(10, 5))
+    bars = ax_score.barh(
+        top_markets["Country"],
+        top_markets["Opportunity_Score"],
+        color="steelblue"
+    )
+    ax_score.set_xlabel("Opportunity Score (0-100)")
+    ax_score.set_title("Top 10 Countries by Market Opportunity")
+    ax_score.invert_yaxis()
+
+    # Add score labels on bars
+    for bar, score in zip(bars, top_markets["Opportunity_Score"]):
+        ax_score.text(
+            bar.get_width() + 0.5,
+            bar.get_y() + bar.get_height() / 2,
+            f"{score}",
+            va="center",
+            fontsize=9
+        )
+
+    st.pyplot(fig_score)
+    plt.close()
+
+    st.dataframe(top_markets, use_container_width=True)
+
+    st.divider()
+
+    # --- Single Country Check ---
+    st.subheader("🔍 Check a Specific Country")
+    check_country = st.selectbox(
+        "Select a country to analyse",
+        score_df["Country"].sort_values(),
+        key="opportunity_country"
+    )
+
+    country_row = score_df[score_df["Country"] == check_country].iloc[0]
+    score = country_row["Opportunity_Score"]
+
+    # Score colour
+    if score >= 70:
+        colour = "🟢"
+        verdict = "Excellent opportunity!"
+    elif score >= 50:
+        colour = "🟡"
+        verdict = "Moderate opportunity"
+    elif score >= 30:
+        colour = "🟠"
+        verdict = "Low opportunity"
+    else:
+        colour = "🔴"
+        verdict = "Not recommended"
+
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("Opportunity Score", f"{score}/100")
+    with col2:
+        st.metric("Verdict", f"{colour} {verdict}")
+    with col3:
+        rank = score_df["Opportunity_Score"].rank(ascending=False)[
+            score_df["Country"] == check_country].values[0]
+        st.metric("Global Rank", f"#{int(rank)} of 233")
+
+    st.divider()
+
+    # Breakdown chart — why this score
+    st.subheader(f"Score Breakdown — {check_country}")
+
+    breakdown_labels = ["Young Population", "Urban Population",
+                        "Growth Rate", "Market Size"]
+    breakdown_values = [
+        round(w_young  * country_row["norm_young"]  * 100, 1),
+        round(w_urban  * country_row["norm_urban"]  * 100, 1),
+        round(w_growth * country_row["norm_growth"] * 100, 1),
+        round(w_size   * country_row["norm_size"]   * 100, 1),
+    ]
+
+    fig_breakdown, ax_breakdown = plt.subplots(figsize=(8, 4))
+    bars2 = ax_breakdown.bar(
+        breakdown_labels,
+        breakdown_values,
+        color=["#2ecc71", "#3498db", "#f1c40f", "#e74c3c"]
+    )
+    ax_breakdown.set_ylabel("Score Contribution")
+    ax_breakdown.set_title(f"What drives {check_country}'s score?")
+
+    for bar, val in zip(bars2, breakdown_values):
+        ax_breakdown.text(
+            bar.get_x() + bar.get_width() / 2,
+            bar.get_height() + 0.3,
+            f"{val}",
+            ha="center",
+            fontsize=10
+        )
+
+    st.pyplot(fig_breakdown)
+    plt.close()        
