@@ -4,7 +4,6 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import plotly.express as px
 
-# Load data
 df = pd.read_csv('world_population_by_country_2026.csv')
 
 st.set_page_config(page_title="World Population Explorer", layout="wide")
@@ -95,7 +94,7 @@ with tab1:
     st.divider()
 
     # Top 10 Most Populated
-    st.subheader("🏆 Top 10 Most Populated Countries")
+    st.subheader("Top 10 Most Populated Countries")
     top10 = df_filtered.nlargest(10, "Population_2026")[["Country", "Population_2026"]]
     
 
@@ -110,7 +109,7 @@ with tab1:
     st.divider()
 
     # Top 10 Fastest Growing
-    st.subheader("📈 Top 10 Fastest Growing Countries")
+    st.subheader("Top 10 Fastest Growing Countries")
     fastest = df_filtered.nlargest(10, "Yearly_Change")[["Country", "Yearly_Change"]]
    
     fig2, ax2 = plt.subplots(figsize=(10, 5))
@@ -124,4 +123,4 @@ with tab1:
     st.divider()
 
     st.divider()
-    
+
